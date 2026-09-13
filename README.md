@@ -1,16 +1,14 @@
 # Evoke API SDK
 
-A lightweight, fully type-safe TypeScript client for the Evoke API, generated from our Go/Huma OpenAPI specification. Uses `openapi-fetch` for a minimal (<5 KB) footprint, making it ideal for our static Jekyll sites and React dashboards.
+A lightweight, fully type-safe TypeScript client for the Evoke API, generated from our Go/Huma OpenAPI specification. Uses `openapi-fetch` for a minimal (~5 KB) runtime dependency, making it ideal for our static Jekyll sites and React dashboards.
 
 ## 📦 Installation
 
 Install the package directly via GitHub:
 
 ```bash
-npm install git+[https://github.com/DigitaleKultur/evoke-api-sdk.git](https://github.com/DigitaleKultur/evoke-api-sdk.git)
+npm install github:digitale-kultur/evoke-api-sdk
 ```
-
-*(Note: Adjust the GitHub org/URL if hosted elsewhere).*
 
 ## 🚀 Usage
 
@@ -19,16 +17,16 @@ The client is pre-configured with the correct base URL. Importing it provides im
 ```typescript
 import { evokeApi } from "evoke-api-sdk";
 
-async function fetchSchedule() {
-  const { data, error } = await evokeApi.GET("/v1/events");
+async function fetchCategories() {
+  const { data, error } = await evokeApi.GET("/contact/categories");
 
   if (error) {
-    console.error("Failed to load events:", error);
+    console.error("Failed to load categories:", error);
     return;
   }
 
   // 'data' is fully typed matching the Go structs
-  console.log(data.events[0].title);
+  console.log(data.categories?.[0].title);
 }
 ```
 
@@ -37,7 +35,8 @@ Extract standalone types for state management or UI components:
 ```typescript
 import type { paths } from "evoke-api-sdk";
 
-type EventItem = paths["/v1/events"]["get"]["responses"]["200"]["content"]["application/json"]["events"][0];
+type CategoryList = paths["/contact/categories"]["get"]["responses"]["200"]["content"]["application/json"]["categories"];
+type CategoryItem = NonNullable<CategoryList>[number];
 ```
 
 ## 🛠️ Update Workflow
@@ -53,4 +52,4 @@ npm run build
 ```
 
 3. Publish: Commit and push the updated `openapi.json` and `src/api-schema.ts` to GitHub.
-4. Consume: Run `npm update evoke-api-sdk` in your Jekyll or React projects.
+4. Consume: Re-run `npm install github:digitale-kultur/evoke-api-sdk` in your Jekyll or React projects (or pin a specific tag/commit for reproducible builds).
