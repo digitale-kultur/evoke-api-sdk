@@ -90,6 +90,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/remote-submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a remote submission */
+        post: operations["createRemoteSubmission"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/remote-submissions/{year}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get list of active remote compos for a year */
+        get: operations["listRemoteSubmissions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -230,6 +264,27 @@ export interface components {
             readonly $schema?: string;
             registrations: components["schemas"]["GetRegistrationItem"][] | null;
         };
+        GetRemoteSubmissionItem: {
+            /**
+             * @description ID of the remote compo
+             * @example 2027-pc-64k-intro
+             */
+            id: string;
+            /**
+             * @description Name of the remote compo
+             * @example PC 64k Intro
+             */
+            name: string;
+        };
+        GetRemoteSubmissionsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetRemoteSubmissionsOutputBody.json
+             */
+            readonly $schema?: string;
+            remote_submissions: components["schemas"]["GetRemoteSubmissionItem"][] | null;
+        };
         PostContactInputBody: {
             /**
              * Format: uri
@@ -240,28 +295,27 @@ export interface components {
             /** @description Captcha response to be verified server side */
             captcha_response: string;
             /**
-             * @description D of the contact category
+             * @description ID of the contact category
              * @example website
              */
             category_id: string;
             /**
-             * Format: email
              * @description Email of the sender
              * @example hans@example.com
              */
             email: string;
             /**
-             * @description Message by the sender
+             * @description Message by the sender (10-5000 characters)
              * @example Lorem ipsum...
              */
             message: string;
             /**
-             * @description Name/Nickname of the sender
+             * @description Name/Nickname of the sender (2-100 characters)
              * @example Hans
              */
             name: string;
             /**
-             * @description Subject by the sender
+             * @description Subject by the sender (at least 5 characters)
              * @example Congratulations
              */
             subject: string;
@@ -276,23 +330,22 @@ export interface components {
             /** @description Captcha response to be verified server side */
             captcha_response: string;
             /**
-             * @description ISO 3166-1 alpha-2 country code of the user
+             * @description ISO 3166-1 alpha-2 country code of the user (2 letters)
              * @example FR
              */
             country_code?: string;
             /**
-             * @description Group of the user
+             * @description Group of the user (at most 100 characters)
              * @example 5711 & Haujobb
              */
             group?: string;
             /**
-             * @description Handle or name of the user
+             * @description Handle or name of the user (2-100 characters)
              * @example Hénry Chevale
              */
             name: string;
             /**
-             * Format: uri
-             * @description Website of the user
+             * @description Website of the user (absolute http/https URL)
              * @example http://www.pouet.net/groups.php?which=5711
              */
             website_url?: string;
@@ -305,6 +358,28 @@ export interface components {
              */
             readonly $schema?: string;
             registration: components["schemas"]["GetRegistrationItem"];
+        };
+        PostRemoteSubmissionOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/PostRemoteSubmissionOutputBody.json
+             */
+            readonly $schema?: string;
+            submission: components["schemas"]["RemoteSubmissionResponse"];
+        };
+        RemoteSubmissionResponse: {
+            artist_first_name: string;
+            artist_group: string | null;
+            artist_handle: string;
+            artist_last_name: string;
+            /** Format: date-time */
+            created_at: string;
+            email: string;
+            id: string;
+            remote_compo_id: string;
+            remote_compo_name: string;
+            title: string;
         };
     };
     responses: never;
@@ -499,6 +574,88 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeleteRegistrationGetOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    createRemoteSubmission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    address_city: string;
+                    address_country: string;
+                    address_street: string;
+                    address_zip: string;
+                    artist_first_name: string;
+                    artist_group?: string;
+                    artist_handle: string;
+                    artist_last_name: string;
+                    captcha_response: string;
+                    email: string;
+                    /** Format: binary */
+                    file: string;
+                    message_organizers?: string;
+                    message_visitors?: string;
+                    remote_compo_id: string;
+                    title: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostRemoteSubmissionOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    listRemoteSubmissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Year to query for */
+                year: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetRemoteSubmissionsOutputBody"];
                 };
             };
             /** @description Error */

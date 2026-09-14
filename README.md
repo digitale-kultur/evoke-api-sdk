@@ -43,7 +43,11 @@ type CategoryItem = NonNullable<CategoryList>[number];
 
 When the Huma API changes in the Go backend, update this SDK:
 
-1. Replace Spec: Overwrite the `openapi.json` in the root directory with the latest version from the backend.
+1. Replace Spec: Download the latest OpenAPI spec and overwrite `openapi.json`:
+
+   ```bash
+   curl -o openapi.json https://api.evoke.eu/openapi.json
+   ```
 2. Generate Types:
 
 ```bash
