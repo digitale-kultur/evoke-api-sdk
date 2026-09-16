@@ -47,6 +47,7 @@ When the Huma API changes in the Go backend, update this SDK:
 
    ```bash
    curl -o openapi.json https://api.evoke.eu/openapi.json
+   curl -o openapi.json http://localhost:3900/openapi.json
    ```
 2. Generate Types:
 

@@ -90,7 +90,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/remote-submissions": {
+    "/remote-submissions/{year}": {
         parameters: {
             query?: never;
             header?: never;
@@ -107,7 +107,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/remote-submissions/{year}": {
+    "/remote-submissions/{year}/meta": {
         parameters: {
             query?: never;
             header?: never;
@@ -591,13 +591,20 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description Year of the event */
+                year: number;
+            };
             cookie?: never;
         };
         requestBody?: {
             content: {
                 "multipart/form-data": {
                     address_city: string;
+                    /**
+                     * @description ISO 3166-1 alpha-2 country code
+                     * @example DE
+                     */
                     address_country: string;
                     address_street: string;
                     address_zip: string;
